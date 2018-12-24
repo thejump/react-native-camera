@@ -13,7 +13,7 @@
 #import <Foundation/Foundation.h>
 #import <AVFoundation/AVFoundation.h>
 
-@protocol SDAVAssetExportSessionDelegate;
+@protocol JExportDelegate;
 
 
 /**
@@ -189,6 +189,6 @@
 
 @protocol JExportDelegate <NSObject>
 
-- (void)exportSession:(SDAVAssetExportSession *)exportSession renderFrame:(CVPixelBufferRef)pixelBuffer withPresentationTime:(CMTime)presentationTime toBuffer:(CVPixelBufferRef)renderBuffer;
+- (void)exportSession:(JExport *)exportSession renderFrame:(CVPixelBufferRef)pixelBuffer withPresentationTime:(CMTime)presentationTime toBuffer:(CVPixelBufferRef)renderBuffer;
 
 @end
