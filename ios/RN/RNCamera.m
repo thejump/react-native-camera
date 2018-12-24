@@ -70,7 +70,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         //                                                 selector:@selector(bridgeDidBackground:)
         //                                                     name:EX_UNVERSIONED(@"EXKernelBridgeDidBackgroundNotification")
         //                                                   object:self.bridge];
-
+        
     }
     return self;
 }
@@ -153,7 +153,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (self.flashMode == RNCameraFlashModeTorch) {
         if (![device hasTorch])
             return;
@@ -201,7 +201,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             }
         }
     }
-
+    
     [device unlockForConfiguration];
 }
 
@@ -209,28 +209,28 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (![device lockForConfiguration:&error]) {
         if (error) {
             RCTLogError(@"%s: %@", __func__, error);
         }
         return;
     }
-
+    
     if ([self.autoFocusPointOfInterest objectForKey:@"x"] && [self.autoFocusPointOfInterest objectForKey:@"y"]) {
         float xValue = [self.autoFocusPointOfInterest[@"x"] floatValue];
         float yValue = [self.autoFocusPointOfInterest[@"y"] floatValue];
         if ([device isFocusPointOfInterestSupported] && [device isFocusModeSupported:AVCaptureFocusModeContinuousAutoFocus]) {
-
+            
             CGPoint autofocusPoint = CGPointMake(xValue, yValue);
             [device setFocusPointOfInterest:autofocusPoint];
             [device setFocusMode:AVCaptureFocusModeContinuousAutoFocus];
-          }
+        }
         else {
             RCTLogWarn(@"AutoFocusPointOfInterest not supported");
         }
     }
-
+    
     [device unlockForConfiguration];
 }
 
@@ -238,14 +238,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (![device lockForConfiguration:&error]) {
         if (error) {
             RCTLogError(@"%s: %@", __func__, error);
         }
         return;
     }
-
+    
     if ([device isFocusModeSupported:self.autoFocus]) {
         if ([device lockForConfiguration:&error]) {
             [device setFocusMode:self.autoFocus];
@@ -255,7 +255,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             }
         }
     }
-
+    
     [device unlockForConfiguration];
 }
 
@@ -263,23 +263,23 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (device == nil || self.autoFocus < 0 || device.focusMode != RNCameraAutoFocusOff || device.position == RNCameraTypeFront) {
         return;
     }
-
+    
     if (![device respondsToSelector:@selector(isLockingFocusWithCustomLensPositionSupported)] || ![device isLockingFocusWithCustomLensPositionSupported]) {
         RCTLogWarn(@"%s: Setting focusDepth isn't supported for this camera device", __func__);
         return;
     }
-
+    
     if (![device lockForConfiguration:&error]) {
         if (error) {
             RCTLogError(@"%s: %@", __func__, error);
         }
         return;
     }
-
+    
     __weak __typeof__(device) weakDevice = device;
     [device setFocusModeLockedWithLensPosition:self.focusDepth completionHandler:^(CMTime syncTime) {
         [weakDevice unlockForConfiguration];
@@ -289,16 +289,16 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 - (void)updateZoom {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (![device lockForConfiguration:&error]) {
         if (error) {
             RCTLogError(@"%s: %@", __func__, error);
         }
         return;
     }
-
+    
     device.videoZoomFactor = (device.activeFormat.videoMaxZoomFactor - 1.0) * self.zoom + 1.0;
-
+    
     [device unlockForConfiguration];
 }
 
@@ -306,14 +306,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     AVCaptureDevice *device = [self.videoCaptureDeviceInput device];
     NSError *error = nil;
-
+    
     if (![device lockForConfiguration:&error]) {
         if (error) {
             RCTLogError(@"%s: %@", __func__, error);
         }
         return;
     }
-
+    
     if (self.whiteBalance == RNCameraWhiteBalanceAuto) {
         [device setWhiteBalanceMode:AVCaptureWhiteBalanceModeContinuousAutoWhiteBalance];
         [device unlockForConfiguration];
@@ -334,7 +334,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             }
         }
     }
-
+    
     [device unlockForConfiguration];
 }
 
@@ -371,7 +371,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         NSMutableDictionary *tmpOptions = [options mutableCopy];
         tmpOptions[@"orientation"]=[NSNumber numberWithInteger:[self.sensorOrientationChecker convertToAVCaptureVideoOrientation: orientation]];
         [self takePicture:tmpOptions resolve:resolve reject:reject];
-
+        
     }];
 }
 - (void)takePicture:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
@@ -392,9 +392,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 resolve(nil);
             }
             NSData *imageData = [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:imageSampleBuffer];
-
+            
             UIImage *takenImage = [UIImage imageWithData:imageData];
-
+            
             CGImageRef takenCGImage = takenImage.CGImage;
             CGSize previewSize;
             if (UIInterfaceOrientationIsPortrait([[UIApplication sharedApplication] statusBarOrientation])) {
@@ -405,18 +405,18 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             CGRect cropRect = CGRectMake(0, 0, CGImageGetWidth(takenCGImage), CGImageGetHeight(takenCGImage));
             CGRect croppedSize = AVMakeRectWithAspectRatioInsideRect(previewSize, cropRect);
             takenImage = [RNImageUtils cropImage:takenImage toRect:croppedSize];
-
+            
             if ([options[@"mirrorImage"] boolValue]) {
                 takenImage = [RNImageUtils mirrorImage:takenImage];
             }
             if ([options[@"forceUpOrientation"] boolValue]) {
                 takenImage = [RNImageUtils forceUpOrientation:takenImage];
             }
-
+            
             if ([options[@"width"] integerValue]) {
                 takenImage = [RNImageUtils scaleImage:takenImage toWidth:[options[@"width"] integerValue]];
             }
-
+            
             NSMutableDictionary *response = [[NSMutableDictionary alloc] init];
             float quality = [options[@"quality"] floatValue];
             NSData *takenImageData = UIImageJPEGRepresentation(takenImage, quality);
@@ -426,13 +426,13 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             }
             response[@"width"] = @(takenImage.size.width);
             response[@"height"] = @(takenImage.size.height);
-
+            
             if ([options[@"base64"] boolValue]) {
                 response[@"base64"] = [takenImageData base64EncodedStringWithOptions:0];
             }
-
-
-
+            
+            
+            
             if ([options[@"exif"] boolValue]) {
                 int imageRotation;
                 switch (takenImage.imageOrientation) {
@@ -455,7 +455,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 }
                 [RNImageUtils updatePhotoMetadata:imageSampleBuffer withAdditionalData:@{ @"Orientation": @(imageRotation) } inResponse:response]; // TODO
             }
-
+            
             if (useFastMode) {
                 [self onPictureSaved:@{@"data": response, @"id": options[@"id"]}];
             } else {
@@ -471,7 +471,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         NSMutableDictionary *tmpOptions = [options mutableCopy];
         tmpOptions[@"orientation"]=[NSNumber numberWithInteger:[self.sensorOrientationChecker convertToAVCaptureVideoOrientation: orientation]];
         [self record:tmpOptions resolve:resolve reject:reject];
-
+        
     }];
 }
 - (void)record:(NSDictionary *)options resolve:(RCTPromiseResolveBlock)resolve reject:(RCTPromiseRejectBlock)reject
@@ -493,26 +493,27 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 #endif
         [self setupMovieFileCapture];
     }
-
+    
     if (self.movieFileOutput == nil || self.movieFileOutput.isRecording || _videoRecordedResolve != nil || _videoRecordedReject != nil) {
-      return;
+        return;
     }
-
+    
     if (options[@"maxDuration"]) {
         Float64 maxDuration = [options[@"maxDuration"] floatValue];
         self.movieFileOutput.maxRecordedDuration = CMTimeMakeWithSeconds(maxDuration, 30);
     }
-
+    
     if (options[@"maxFileSize"]) {
         self.movieFileOutput.maxRecordedFileSize = [options[@"maxFileSize"] integerValue];
     }
-
+    
     if (options[@"quality"]) {
-        [self updateSessionPreset:[RNCameraUtils captureSessionPresetForVideoResolution:(RNCameraVideoResolution)[options[@"quality"] integerValue]]];
+        [self updateSessionPreset:[RNCameraUtils captureSessionPresetForVideoResolution:(RNCameraVideoResolution)2]];
+        
     }
-
+    
     [self updateSessionAudioIsMuted:!!options[@"mute"]];
-
+    
     AVCaptureConnection *connection = [self.movieFileOutput connectionWithMediaType:AVMediaTypeVideo];
     if (self.videoStabilizationMode != 0) {
         if (connection.isVideoStabilizationSupported == NO) {
@@ -522,19 +523,19 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         }
     }
     [connection setVideoOrientation:orientation];
-
+    
     if (options[@"codec"]) {
-      if (@available(iOS 10, *)) {
-        AVVideoCodecType videoCodecType = options[@"codec"];
-        if ([self.movieFileOutput.availableVideoCodecTypes containsObject:videoCodecType]) {
-          [self.movieFileOutput setOutputSettings:@{AVVideoCodecKey:videoCodecType} forConnection:connection];
-          self.videoCodecType = videoCodecType;
-        } else {
-            RCTLogWarn(@"%s: Setting videoCodec is only supported above iOS version 10.", __func__);
+        if (@available(iOS 10, *)) {
+            AVVideoCodecType videoCodecType = options[@"codec"];
+            if ([self.movieFileOutput.availableVideoCodecTypes containsObject:videoCodecType]) {
+                [self.movieFileOutput setOutputSettings:@{AVVideoCodecKey:videoCodecType} forConnection:connection];
+                self.videoCodecType = videoCodecType;
+            } else {
+                RCTLogWarn(@"%s: Setting videoCodec is only supported above iOS version 10.", __func__);
+            }
         }
-      }
     }
-
+    
     dispatch_async(self.sessionQueue, ^{
         [self updateFlashMode];
         NSString *path = nil;
@@ -544,9 +545,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         else {
             path = [RNFileSystem generatePathInDirectory:[[RNFileSystem cacheDirectoryPath] stringByAppendingPathComponent:@"Camera"] withExtension:@".mov"];
         }
-
-       
-
+        
+        
+        
         NSURL *outputURL = [[NSURL alloc] initFileURLWithPath:path];
         [self.movieFileOutput startRecordingToOutputFileURL:outputURL recordingDelegate:self];
         self.videoRecordedResolve = resolve;
@@ -583,9 +584,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         if (self.presetCamera == AVCaptureDevicePositionUnspecified) {
             return;
         }
-
+        
         self.session.sessionPreset = AVCaptureSessionPresetPhoto;
-
+        
         AVCaptureStillImageOutput *stillImageOutput = [[AVCaptureStillImageOutput alloc] init];
         if ([self.session canAddOutput:stillImageOutput]) {
             stillImageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
@@ -593,7 +594,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             [stillImageOutput setHighResolutionStillImageOutputEnabled:YES];
             self.stillImageOutput = stillImageOutput;
         }
-
+        
 #if __has_include(<GoogleMobileVision/GoogleMobileVision.h>)
         [_faceDetectorManager maybeStartFaceDetectionOnSession:_session withPreviewLayer:_previewLayer];
         if ([self.textDetector isRealDetector]) {
@@ -607,7 +608,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         [self setupMovieFileCapture];
 #endif
         [self setupOrDisableBarcodeScanner];
-
+        
         __weak RNCamera *weakSelf = self;
         [self setRuntimeErrorHandlingObserver:
          [NSNotificationCenter.defaultCenter addObserverForName:AVCaptureSessionRuntimeErrorNotification object:self.session queue:nil usingBlock:^(NSNotification *note) {
@@ -619,7 +620,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 [strongSelf onReady:nil];
             });
         }]];
-
+        
         [self.session startRunning];
         [self onReady:nil];
     });
@@ -643,7 +644,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         for (AVCaptureInput *input in self.session.inputs) {
             [self.session removeInput:input];
         }
-
+        
         for (AVCaptureOutput *output in self.session.outputs) {
             [self.session removeOutput:output];
         }
@@ -656,7 +657,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         return;
     }
     __block UIInterfaceOrientation interfaceOrientation;
-
+    
     void (^statusBlock)() = ^() {
         interfaceOrientation = [[UIApplication sharedApplication] statusBarOrientation];
     };
@@ -665,24 +666,24 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     } else {
         dispatch_sync(dispatch_get_main_queue(), statusBlock);
     }
-
+    
     AVCaptureVideoOrientation orientation = [RNCameraUtils videoOrientationForInterfaceOrientation:interfaceOrientation];
     dispatch_async(self.sessionQueue, ^{
         [self.session beginConfiguration];
-
+        
         NSError *error = nil;
         AVCaptureDevice *captureDevice = [RNCameraUtils deviceWithMediaType:AVMediaTypeVideo preferringPosition:self.presetCamera];
         AVCaptureDeviceInput *captureDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:&error];
-
+        
         if (error || captureDeviceInput == nil) {
             RCTLog(@"%s: %@", __func__, error);
             return;
         }
-
+        
         [self.session removeInput:self.videoCaptureDeviceInput];
         if ([self.session canAddInput:captureDeviceInput]) {
             [self.session addInput:captureDeviceInput];
-
+            
             self.videoCaptureDeviceInput = captureDeviceInput;
             [self updateFlashMode];
             [self updateZoom];
@@ -693,7 +694,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             [self.previewLayer.connection setVideoOrientation:orientation];
             [self _updateMetadataObjectsToRecognize];
         }
-
+        
         [self.session commitConfiguration];
     });
 }
@@ -726,7 +727,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     dispatch_async(self.sessionQueue, ^{
         [self.session beginConfiguration];
-
+        
         for (AVCaptureDeviceInput* input in [self.session inputs]) {
             if ([input.device hasMediaType:AVMediaTypeAudio]) {
                 if (isMuted) {
@@ -736,30 +737,30 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 return;
             }
         }
-
+        
         if (!isMuted) {
             NSError *error = nil;
-
+            
             AVCaptureDevice *audioCaptureDevice = [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
             AVCaptureDeviceInput *audioDeviceInput = [AVCaptureDeviceInput deviceInputWithDevice:audioCaptureDevice error:&error];
-
+            
             if (error || audioDeviceInput == nil) {
                 RCTLogWarn(@"%s: %@", __func__, error);
                 return;
             }
-
+            
             if ([self.session canAddInput:audioDeviceInput]) {
                 [self.session addInput:audioDeviceInput];
             }
         }
-
+        
         [self.session commitConfiguration];
     });
 }
 
 - (void)bridgeDidForeground:(NSNotification *)notification
 {
-
+    
     if (![self.session isRunning] && [self isSessionPaused]) {
         self.paused = NO;
         dispatch_async( self.sessionQueue, ^{
@@ -824,17 +825,17 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     if (_metadataOutput == nil) {
         return;
     }
-
+    
     NSArray<AVMetadataObjectType> *availableRequestedObjectTypes = [[NSArray alloc] init];
     NSArray<AVMetadataObjectType> *requestedObjectTypes = [NSArray arrayWithArray:self.barCodeTypes];
     NSArray<AVMetadataObjectType> *availableObjectTypes = _metadataOutput.availableMetadataObjectTypes;
-
+    
     for(AVMetadataObjectType objectType in requestedObjectTypes) {
         if ([availableObjectTypes containsObject:objectType]) {
             availableRequestedObjectTypes = [availableRequestedObjectTypes arrayByAddingObject:objectType];
         }
     }
-
+    
     [_metadataOutput setMetadataObjectTypes:availableRequestedObjectTypes];
 }
 
@@ -851,17 +852,17 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                                             @"type" : codeMetadata.type,
                                             @"data" : codeMetadata.stringValue,
                                             @"bounds": @{
-                                                @"origin": @{
-                                                    @"x": [NSString stringWithFormat:@"%f", transformed.bounds.origin.x],
-                                                    @"y": [NSString stringWithFormat:@"%f", transformed.bounds.origin.y]
-                                                },
-                                                @"size": @{
-                                                    @"height": [NSString stringWithFormat:@"%f", transformed.bounds.size.height],
-                                                    @"width": [NSString stringWithFormat:@"%f", transformed.bounds.size.width]
-                                                }
-                                            }
+                                                    @"origin": @{
+                                                            @"x": [NSString stringWithFormat:@"%f", transformed.bounds.origin.x],
+                                                            @"y": [NSString stringWithFormat:@"%f", transformed.bounds.origin.y]
+                                                            },
+                                                    @"size": @{
+                                                            @"height": [NSString stringWithFormat:@"%f", transformed.bounds.size.height],
+                                                            @"width": [NSString stringWithFormat:@"%f", transformed.bounds.size.width]
+                                                            }
+                                                    }
                                             };
-
+                    
                     [self onCodeRead:event];
                 }
             }
@@ -874,7 +875,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 - (void)setupMovieFileCapture
 {
     AVCaptureMovieFileOutput *movieFileOutput = [[AVCaptureMovieFileOutput alloc] init];
-
+    
     if ([self.session canAddOutput:movieFileOutput]) {
         [self.session addOutput:movieFileOutput];
         self.movieFileOutput = movieFileOutput;
@@ -899,13 +900,13 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         }
     }
     if (success && self.videoRecordedResolve != nil) {
-      if (@available(iOS 10, *)) {
-          AVVideoCodecType videoCodec = self.videoCodecType;
-          if (videoCodec == nil) {
-              videoCodec = [self.movieFileOutput.availableVideoCodecTypes firstObject];
-          }
-          
-              
+        if (@available(iOS 10, *)) {
+            AVVideoCodecType videoCodec = self.videoCodecType;
+            if (videoCodec == nil) {
+                videoCodec = [self.movieFileOutput.availableVideoCodecTypes firstObject];
+            }
+            
+            
             [self rotateVideo:outputFileURL completion:^(NSURL *mirroredURL) {
                 AVAsset* videoAsset = [AVAsset assetWithURL:mirroredURL];
                 AVAssetTrack* clipVideoTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
@@ -913,49 +914,53 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
                 self.videoRecordedResolve(@{ @"uri": mirroredURL.absoluteString, @"codec":videoCodec,@"height":@(clipVideoTrack.naturalSize.height),@"width":@(clipVideoTrack.naturalSize.width) });
                 [self cleanupCamera];
             }];
-      
-      } else {
-          self.videoRecordedResolve(@{ @"uri": outputFileURL.absoluteString });
-          [self cleanupCamera];
-      }
+            
+        } else {
+            self.videoRecordedResolve(@{ @"uri": outputFileURL.absoluteString });
+            [self cleanupCamera];
+        }
     } else if (self.videoRecordedReject != nil) {
         self.videoRecordedReject(@"E_RECORDING_FAILED", @"An error occurred while recording a video.", error);
         [self cleanupCamera];
- }
-
-   
+    }
+    
+    
 }
 
 - (void)cleanupCamera {
     self.videoRecordedResolve = nil;
     self.videoRecordedReject = nil;
     self.videoCodecType = nil;
-
+    
 #if __has_include(<GoogleMobileVision/GoogleMobileVision.h>)
     [self cleanupMovieFileCapture];
-
+    
     // If face detection has been running prior to recording to file
     // we reenable it here (see comment in -record).
     [_faceDetectorManager maybeStartFaceDetectionOnSession:_session withPreviewLayer:_previewLayer];
 #endif
-
+    
     if ([self.textDetector isRealDetector]) {
         [self cleanupMovieFileCapture];
         [self setupOrDisableTextDetector];
     }
-
+    
     if (self.session.sessionPreset != AVCaptureSessionPresetPhoto) {
         [self updateSessionPreset:AVCaptureSessionPresetPhoto];
     }
 }
 
+
 - (void)rotateVideo:(NSURL *)inputURL completion:(void (^)(NSURL* outputUR))completion {
-  
+    
     
     AVAsset* videoAsset = [AVAsset assetWithURL:inputURL];
     AVAssetTrack* clipVideoTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
     
     JExport *encoder = [JExport.alloc initWithAsset:videoAsset];
+    
+    
+    
     
     
     AVMutableComposition* composition = [[AVMutableComposition alloc] init];
@@ -967,10 +972,19 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     double height=clipVideoTrack.naturalSize.height;
     double width=clipVideoTrack.naturalSize.width;
     
-    CGFloat scaleFactor = (width > height) ? 1280 / width : 1280 / height;
+    /*  if(width>height){
+     int temp=width;
+     width=height;
+     height=temp;
+     }*/
     
-    int scaledWidth = width * scaleFactor;
-    int scaledHeight = height * scaleFactor;
+    CGFloat scaleFactor = (width > height) ? 1280 / width : 1280 / height;
+    if(scaleFactor>1){
+        scaleFactor=1;
+    }
+    int scaledWidth = height * scaleFactor;
+    int scaledHeight = width * scaleFactor;
+    
     
     videoComposition.renderSize = CGSizeMake(scaledWidth,scaledHeight);
     videoComposition.frameDuration = CMTimeMake(1, 30);
@@ -1004,12 +1018,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     encoder.outputFileType = AVFileTypeMPEG4;
     encoder.shouldOptimizeForNetworkUse = YES;
     
+    NSLog(@"video 1 w : %d  ", scaledWidth);
+    NSLog(@"video 1 h : %d  ", scaledHeight);
     
     encoder.videoSettings = @
     {
     AVVideoCodecKey: AVVideoCodecH264,
-    AVVideoWidthKey: @(scaledWidth),
-    AVVideoHeightKey: @(scaledHeight),
+    AVVideoWidthKey: @((double)scaledWidth),
+    AVVideoHeightKey: @((double)scaledHeight),
     AVVideoCompressionPropertiesKey: @
         {
         AVVideoAverageBitRateKey: @3000000,
@@ -1039,7 +1055,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
              dispatch_async(dispatch_get_main_queue(), ^{
                  completion(outputURL);
              });
-              // encoder.outputURL <- this is what you want!!
+             // encoder.outputURL <- this is what you want!!
          }
          else if (status == AVAssetExportSessionStatusCancelled)
          {
@@ -1059,14 +1075,6 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
      }];
     
     
-    
-    
-    
-    
-    
-    
-    
-    
 }
 
 
@@ -1076,7 +1084,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     Class faceDetectorManagerClass = NSClassFromString(@"RNFaceDetectorManager");
     Class faceDetectorManagerStubClass = NSClassFromString(@"RNFaceDetectorManagerStub");
-
+    
 #if __has_include(<GoogleMobileVision/GoogleMobileVision.h>)
     if (faceDetectorManagerClass) {
         return [[faceDetectorManagerClass alloc] initWithSessionQueue:_sessionQueue delegate:self];
@@ -1084,7 +1092,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         return [[faceDetectorManagerStubClass alloc] init];
     }
 #endif
-
+    
     return nil;
 }
 
@@ -1104,8 +1112,8 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 {
     Class textDetectorManagerClass = NSClassFromString(@"TextDetectorManager");
     Class textDetectorManagerStubClass =
-        NSClassFromString(@"TextDetectorManagerStub");
-
+    NSClassFromString(@"TextDetectorManagerStub");
+    
 #if __has_include(<GoogleMobileVision/GoogleMobileVision.h>)
     if (textDetectorManagerClass) {
         return [[textDetectorManagerClass alloc] init];
@@ -1113,7 +1121,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         return [[textDetectorManagerStubClass alloc] init];
     }
 #endif
-
+    
     return nil;
 }
 
@@ -1127,8 +1135,8 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             return;
         }
         NSDictionary *rgbOutputSettings = [NSDictionary
-            dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA]
-                            forKey:(id)kCVPixelBufferPixelFormatTypeKey];
+                                           dictionaryWithObject:[NSNumber numberWithInt:kCMPixelFormat_32BGRA]
+                                           forKey:(id)kCVPixelBufferPixelFormatTypeKey];
         [self.videoDataOutput setVideoSettings:rgbOutputSettings];
         [self.videoDataOutput setAlwaysDiscardsLateVideoFrames:YES];
         [self.videoDataOutput setSampleBufferDelegate:self queue:self.sessionQueue];
@@ -1139,13 +1147,13 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 }
 
 - (void)captureOutput:(AVCaptureOutput *)captureOutput
-    didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
-           fromConnection:(AVCaptureConnection *)connection
+didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer
+       fromConnection:(AVCaptureConnection *)connection
 {
     if (![self.textDetector isRealDetector]) {
         return;
     }
-
+    
     // Do not submit image for text recognition too often:
     // 1. we only dispatch events every 500ms anyway
     // 2. wait until previous recognition is finished
@@ -1158,14 +1166,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         // take care of the fact that preview dimensions differ from the ones of the image that we submit for text detection
         float scaleX = _previewLayer.frame.size.width / image.size.width;
         float scaleY = _previewLayer.frame.size.height / image.size.height;
-
+        
         // find text features
         _finishedReadingText = false;
         self.start = [NSDate date];
         NSArray *textBlocks = [self.textDetector findTextBlocksInFrame:image scaleX:scaleX scaleY:scaleY];
         NSDictionary *eventText = @{@"type" : @"TextBlock", @"textBlocks" : textBlocks};
         [self onText:eventText];
-
+        
         _finishedReadingText = true;
     }
 }
@@ -1173,7 +1181,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
 - (void)stopTextRecognition
 {
     if (self.videoDataOutput) {
-    [self.session removeOutput:self.videoDataOutput];
+        [self.session removeOutput:self.videoDataOutput];
     }
     self.videoDataOutput = nil;
 }
