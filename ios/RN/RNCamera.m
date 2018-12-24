@@ -8,7 +8,7 @@
 #import <React/UIView+React.h>
 #import  "RNSensorOrientationChecker.h"
 
-#import "SDAVAssetExportSession.h"
+#import "JExport.h"
 @interface RNCamera ()
 
 @property (nonatomic, weak) RCTBridge *bridge;
