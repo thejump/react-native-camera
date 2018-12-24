@@ -955,7 +955,7 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     AVAsset* videoAsset = [AVAsset assetWithURL:inputURL];
     AVAssetTrack* clipVideoTrack = [[videoAsset tracksWithMediaType:AVMediaTypeVideo] firstObject];
     
-    SDAVAssetExportSession *encoder = [SDAVAssetExportSession.alloc initWithAsset:videoAsset];
+    JExport *encoder = [JExport.alloc initWithAsset:videoAsset];
     
     
     AVMutableComposition* composition = [[AVMutableComposition alloc] init];

@@ -13,7 +13,7 @@
 
 #import "JExport.h"
 
-@interface SDAVAssetExportSession ()
+@interface JExport ()
 
 @property (nonatomic, assign, readwrite) float progress;
 
@@ -29,7 +29,7 @@
 
 @end
 
-@implementation SDAVAssetExportSession
+@implementation JExport
 {
     NSError *_error;
     NSTimeInterval duration;
@@ -38,7 +38,7 @@
 
 + (id)exportSessionWithAsset:(AVAsset *)asset
 {
-    return [SDAVAssetExportSession.alloc initWithAsset:asset];
+    return [JExport.alloc initWithAsset:asset];
 }
 
 - (id)initWithAsset:(AVAsset *)asset

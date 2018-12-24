@@ -33,9 +33,9 @@
  * about the reason for the failure.
  */
 
-@interface SDAVAssetExportSession : NSObject
+@interface JExport : NSObject
 
-@property (nonatomic, weak) id<SDAVAssetExportSessionDelegate> delegate;
+@property (nonatomic, weak) id<JExportDelegate> delegate;
 
 /**
  * The asset with which the export session was initialized.
@@ -187,7 +187,7 @@
 @end
 
 
-@protocol SDAVAssetExportSessionDelegate <NSObject>
+@protocol JExportDelegate <NSObject>
 
 - (void)exportSession:(SDAVAssetExportSession *)exportSession renderFrame:(CVPixelBufferRef)pixelBuffer withPresentationTime:(CMTime)presentationTime toBuffer:(CVPixelBufferRef)renderBuffer;
 
