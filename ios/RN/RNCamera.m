@@ -982,9 +982,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     if(scaleFactor>1){
         scaleFactor=1;
     }
-    int scaledWidth = height * scaleFactor;
-    int scaledHeight = width * scaleFactor;
-    
+    int scaledWidth = roundf(height * scaleFactor);
+    int scaledHeight = roundf(width * scaleFactor);
+       if(scaledWidth%2!=0){
+        scaledWidth=scaledWidth+1;
+    }
+       if(scaledHeight%2!=0){
+        scaledHeight=scaledHeight+1;
+    }
     
     videoComposition.renderSize = CGSizeMake(scaledWidth,scaledHeight);
     videoComposition.frameDuration = CMTimeMake(1, 30);
